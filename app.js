@@ -1,11 +1,15 @@
 // Setup
 // -----------------------------------------------------------------------------
 const express = require("express");
+const bodyParser = require("body-parser");
 
 
 const app = express();
 
 app.use(express.static(__dirname + "/public"));
+
+// Creates "request.body" for our POST form submission routes
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set("view engine", "hbs");
 
@@ -72,6 +76,23 @@ app.get("/results", (request, response, next) => {
   response.render("search-results.hbs");
 });
 
+app.get("/login", (request, response, next) => {
+  response.render("login-form.hbs");
+});
+
+app.post("/process-login", (request, response, next) => {
+  // "request.body" is created by the "body-parser" npm package
+  const { userEmail, userPassword } = request.body;
+
+  response.locals.email = userEmail;
+
+  if (userEmail === "yoda@master.com" && userPassword === "yoda0") {
+    response.render("welcome.hbs");
+  }
+  else {
+    response.render("gtfo.hbs");
+  }
+});
 
 
 app.listen(3000, () => {
